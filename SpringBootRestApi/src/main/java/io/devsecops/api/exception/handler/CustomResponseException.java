@@ -11,7 +11,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import io.devsecops.api.exception.ExceptionResponse;
-import io.devsecops.api.exception.UnsuportedOperation;
+import io.devsecops.api.exception.ResouceNotFoundException;
 
 @ControllerAdvice
 @RestController
@@ -30,7 +30,7 @@ public class CustomResponseException extends ResponseEntityExceptionHandler {
 	}
 	
 	//gauging HTTP error:
-	@ExceptionHandler(UnsuportedOperation.class)
+	@ExceptionHandler(ResouceNotFoundException.class)
 	public final ResponseEntity<ExceptionResponse> handleBadRequestException(Exception ex, WebRequest request){
 		
 		ExceptionResponse exceptionResponse = 
