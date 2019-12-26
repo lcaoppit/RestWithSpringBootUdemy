@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.devsecops.api.data.model.Person;
-import io.devsecops.api.data.vo.PersonVO;
+import io.devsecops.api.data.vo.v1.PersonVO;
 
 public class MockPerson {
 
@@ -35,22 +35,22 @@ public class MockPerson {
 	
 	private Person mockEntity(Integer number) {
 		Person person = new Person();
-		person.setAddress("Address Text" + number);		
-		person.setFirstName("First Name Text" + number);
+		person.setAddress("Addres Test" + number);		
+		person.setFirstName("First Name Test" + number);
 		person.setGender(((number % 2)==0) ? "Male" : "Female");
 		person.setId(number.longValue());
-		person.setLastName("Last Name Text" + number);
+		person.setLastName("Last Name Test" + number);
 		return person;
 		
 	}
 	
 	private PersonVO mockVO(Integer number) {
 		PersonVO person = new PersonVO();
-		person.setAddress("Address Text" + number);		
-		person.setFirstName("First Name Text" + number);
+		person.setAddress("Addres Test" + number);		
+		person.setFirstName("First Name Test" + number);
 		person.setGender(((number % 2)==0) ? "Male" : "Female");
-		person.setId(number.longValue());
-		person.setLastName("Last Name Text" + number);
+		person.setKey(number.longValue());
+		person.setLastName("Last Name Test" + number);
 		return person;
 	}
 }

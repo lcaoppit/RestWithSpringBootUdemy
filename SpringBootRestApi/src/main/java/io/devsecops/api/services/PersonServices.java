@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import io.devsecops.api.converter.DozerConverter;
 import io.devsecops.api.converter.custom.PersonConverter;
 import io.devsecops.api.data.model.Person;
-import io.devsecops.api.data.vo.PersonVO;
+import io.devsecops.api.data.vo.v1.PersonVO;
 import io.devsecops.api.data.vo.v2.PersonVOv2;
 import io.devsecops.api.exception.ResouceNotFoundException;
 import io.devsecops.api.repository.PersonRepository;
@@ -45,7 +45,7 @@ public class PersonServices {
 	}
 	
 	public PersonVO update(PersonVO person) {
-		var entity = repository.findById(person.getId()).orElseThrow(() -> new ResouceNotFoundException("No records found for this ID"));
+		var entity = repository.findById(person.getKey()).orElseThrow(() -> new ResouceNotFoundException("No records found for this ID"));
 		entity.setFirstName(person.getFirstName());
 		entity.setLastName(person.getLastName());
 		entity.setAddress(person.getAddress());

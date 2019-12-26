@@ -3,6 +3,11 @@ package io.devsecops.api.Controller;
 
 import java.util.List;
 
+//import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+//import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,43 +19,46 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.devsecops.api.data.vo.PersonVO;
-import io.devsecops.api.data.vo.v2.PersonVOv2;
+import io.devsecops.api.data.vo.v1.PersonVO;
 import io.devsecops.api.services.PersonServices;
 
 @RestController
-@RequestMapping("/person")
+@RequestMapping("/api/person/v1")
 public class PersonController {
 	
 	@Autowired
 	private PersonServices services;
 
 	//list ALL account
-	@GetMapping	
+	@GetMapping(produces = {"application/json", "application/xml", "application/x-yaml"})	
 	public List<PersonVO> findAll() {
-		return services.findAll();
+		List<PersonVO> persons = services.findAll();
+		persons.stream().forEach(p -> p.add(linkTo(methodOn(PersonController.class).findById(p.getKey())).withSelfRel()));
+		return persons;
 	}
 	
 	//List ONE account
-	@GetMapping("/{id}")
+	@GetMapping(value = "/{id}", produces = {"application/json", "application/xml", "application/x-yaml"})
 	public PersonVO findById(@PathVariable("id") Long id) {
-		return services.findById(id);
+		PersonVO personVO = services.findById(id);
+		personVO.add(linkTo(methodOn(PersonController.class).findById(id)).withSelfRel());
+		return personVO;
 	}
 	
 	//Create account
-	@PostMapping
+	@PostMapping(produces = {"application/json", "application/xml", "application/x-yaml"}, consumes = {"application/json", "application/xml", "application/x-yaml"})
 		public PersonVO create(@RequestBody PersonVO person) {
-		return services.create(person);
+		PersonVO personVO = services.create(person);
+		personVO.add(linkTo(methodOn(PersonController.class).findById(personVO.getKey())).withSelfRel());
+		return personVO;
 	}
-	@PostMapping("/v2")
-	public PersonVOv2 createV2(@RequestBody PersonVOv2 person) {
-	return services.createV2(person);
-}
 	
 	//Update an account
-	@PutMapping	
+	@PutMapping(produces = {"application/json", "application/xml", "application/x-yaml"}, consumes = {"application/json", "application/xml", "application/x-yaml"})
 	public PersonVO update(@RequestBody PersonVO person) {
-		return services.update(person);
+		PersonVO personVO = services.update(person);
+		personVO.add(linkTo(methodOn(PersonController.class).findById(personVO.getKey())).withSelfRel());
+		return personVO;
 	}
 	
 	//Delete an account
