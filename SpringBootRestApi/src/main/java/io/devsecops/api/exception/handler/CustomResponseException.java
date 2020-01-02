@@ -11,7 +11,8 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import io.devsecops.api.exception.ExceptionResponse;
-import io.devsecops.api.exception.ResouceNotFoundException;
+import io.devsecops.api.exception.InvalidJwtAuthenticationException;
+import io.devsecops.api.exception.ResourceNotFoundException;
 
 @ControllerAdvice
 @RestController
@@ -30,7 +31,7 @@ public class CustomResponseException extends ResponseEntityExceptionHandler {
 	}
 	
 	//gauging HTTP error:
-	@ExceptionHandler(ResouceNotFoundException.class)
+	@ExceptionHandler(ResourceNotFoundException.class)
 	public final ResponseEntity<ExceptionResponse> handleBadRequestException(Exception ex, WebRequest request){
 		
 		ExceptionResponse exceptionResponse = 
@@ -41,4 +42,14 @@ public class CustomResponseException extends ResponseEntityExceptionHandler {
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
 	}
 	
+	@ExceptionHandler(InvalidJwtAuthenticationException.class)
+	public final ResponseEntity<ExceptionResponse> invalidJwtAuthenticationException(Exception ex, WebRequest request){
+		
+		ExceptionResponse exceptionResponse = 
+				new ExceptionResponse(
+						new Date(),
+						ex.getMessage(),
+						request.getDescription(false));
+		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+	}
 }

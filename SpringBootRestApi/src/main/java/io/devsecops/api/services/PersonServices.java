@@ -10,7 +10,7 @@ import io.devsecops.api.converter.custom.PersonConverter;
 import io.devsecops.api.data.model.Person;
 import io.devsecops.api.data.vo.v1.PersonVO;
 import io.devsecops.api.data.vo.v2.PersonVOv2;
-import io.devsecops.api.exception.ResouceNotFoundException;
+import io.devsecops.api.exception.ResourceNotFoundException;
 import io.devsecops.api.repository.PersonRepository;
 
 // Use "SERVICE" annotation to SpringBoot work himself the dependences
@@ -40,12 +40,12 @@ public class PersonServices {
 	}
 	
 	public PersonVO findById(Long id) {
-		var entity = repository.findById(id).orElseThrow(() -> new ResouceNotFoundException("No records found for this ID"));
+		var entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No records found for this ID"));
 		return DozerConverter.parseObject(entity, PersonVO.class);
 	}
 	
 	public PersonVO update(PersonVO person) {
-		var entity = repository.findById(person.getKey()).orElseThrow(() -> new ResouceNotFoundException("No records found for this ID"));
+		var entity = repository.findById(person.getKey()).orElseThrow(() -> new ResourceNotFoundException("No records found for this ID"));
 		entity.setFirstName(person.getFirstName());
 		entity.setLastName(person.getLastName());
 		entity.setAddress(person.getAddress());
@@ -56,7 +56,7 @@ public class PersonServices {
 	
 	public void delete(Long id) {
 	
-		Person entity = repository.findById(id).orElseThrow(() -> new ResouceNotFoundException("No records found for this ID"));
+		Person entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No records found for this ID"));
 		repository.delete(entity);
 	}
 }
