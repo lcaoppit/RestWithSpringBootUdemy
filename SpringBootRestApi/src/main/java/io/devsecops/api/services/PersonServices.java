@@ -1,15 +1,15 @@
 package io.devsecops.api.services;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import io.devsecops.api.converter.DozerConverter;
 import io.devsecops.api.converter.custom.PersonConverter;
 import io.devsecops.api.data.model.Person;
 import io.devsecops.api.data.vo.v1.PersonVO;
-import io.devsecops.api.data.vo.v2.PersonVOv2;
 import io.devsecops.api.exception.ResourceNotFoundException;
 import io.devsecops.api.repository.PersonRepository;
 
@@ -29,14 +29,18 @@ public class PersonServices {
 		return vo;
 	}
 	
-	public PersonVOv2 createV2(PersonVOv2 person) {
-		var entity = converter.convertVOtoEntity(person);
-		var vo = converter.convertEntitytoVO(repository.save(entity));
-		return vo;
+	public Page<PersonVO> findAll(Pageable pageable){
+		var page = repository.findAll(pageable);
+		return page.map(this::convertToPersonVO);
 	}
 	
-	public List<PersonVO> findAll(){
-		return DozerConverter.parseListObjects(repository.findAll(), PersonVO.class);
+	private PersonVO convertToPersonVO(Person entity) {
+		return DozerConverter.parseObject(entity, PersonVO.class);
+	}
+	
+	public Page<PersonVO> findPersonByName(String firstName, Pageable pageable){
+		var page = repository.findPersonByName(firstName, pageable);
+		return page.map(this::convertToPersonVO);
 	}
 	
 	public PersonVO findById(Long id) {
@@ -52,6 +56,14 @@ public class PersonServices {
 		entity.setGender(person.getGender());
 		var vo =  DozerConverter.parseObject(repository.save(entity), PersonVO.class);
 		return vo;
+	}
+	
+	@Transactional
+	public PersonVO disablePerson(Long id) {
+		repository.disablePersons(id);
+		
+		var entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No records found for this ID"));
+		return DozerConverter.parseObject(entity, PersonVO.class);
 	}
 	
 	public void delete(Long id) {
